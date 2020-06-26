@@ -1,0 +1,22 @@
+Create a bash script, for example :
+nano /scripts/script-update-date-with-google.sh
+
+Insert :
+#!/bin/bash
+
+newdate="$(wget -S "http://google.com/" 2>&1 | grep -E '^[[:space:]]*[dD]ate:' | sed 's/^[[:space:]]*[dD]ate:[[:space:]]*//' | head -1l | awk '{print $1, $3, $2, $5 ,"GMT", $4 }' | sed 's/,//')"
+if [ -z "$newdate" ]
+  then
+    echo ""
+  else
+date -s "$newdate"
+
+fi
+rm index.html
+
+
+Allow the script to be used :
+chmod +x /var/dss/script-update-date-with-google.sh
+
+Add to crontab (crontab -e) :
+*/10 * * * * /scripts/script-update-date-by-google.sh
